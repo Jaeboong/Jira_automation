@@ -1,8 +1,8 @@
-# 📋 Jira Convention
+# 📋 Jira Convention — SSAFY Example
 
-본 문서는 프로젝트에서 사용하는 **Jira 이슈 작성 규칙, Story Point 기준, 작업 흐름**을 정의한다.
+> **예시 문서입니다 — 그대로 쓰지 마세요.** 이 파일은 원작성자(SSAFY 프로젝트) 팀이 사용한 규약이며, 다른 팀의 기본값이 아닙니다. `/setup` 은 기본적으로 `conventions/default.md` (글로벌 표준) 를 사용합니다. 본인 팀 규약이 있다면 `/setup` 의 "팀 컨벤션 있나요?" 질문에서 **yes** 를 선택해 입력하세요.
 
-> **주의 — 팀 규약입니다.** 아래 라벨(`FE`/`BE`/`AI`/`DOCS`), Story Point 스케일(1–10), 상태 흐름(`To Do → In Progress → Code Review → Done`)은 원작성 팀 기준입니다. 다른 팀/프로젝트에서 이 리포지토리를 쓸 때는 **이 파일을 팀 규약으로 덮어쓰고 나서** 생성/수정 작업을 시작하세요.
+본 문서는 원작성 팀이 사용한 **Jira 이슈 작성 규칙, Story Point 기준, 작업 흐름**입니다.
 
 ---
 

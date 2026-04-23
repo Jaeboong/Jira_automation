@@ -47,6 +47,52 @@ chmod 600 ~/.config/jira-automation/.env
 
 `<입력값 N>` 은 사용자가 준 실제 값으로 치환. **heredoc quote (`'EOF'`) 를 꼭 유지** — 토큰에 `$` 가 있으면 쉘 확장되는 사고를 막기 위함.
 
+## 2.5. Jira 컨벤션 설정
+
+먼저 기존 컨벤션 감지:
+
+```bash
+test -f ~/.config/jira-automation/convention.md && echo "EXISTS" || echo "MISSING"
+```
+
+- `EXISTS` 이면 "이미 `~/.config/jira-automation/convention.md` 가 있습니다. 덮어쓸까요?" 물어서 명시적 yes 가 아니면 **이 단계를 건너뛰고 3단계로**.
+- `MISSING` 이면 아래 질문:
+
+> **팀이 사용하는 Jira 컨벤션 문서가 있나요? (y/n)**
+>
+> - `y` — 경로 (로컬 파일 또는 URL) 를 알려주시거나, 내용을 직접 붙여넣어 주세요. 이슈 생성/수정 시 이 규약을 따릅니다.
+> - `n` — 글로벌 표준 (Atlassian Scrum 기본: Fibonacci Story Points, To Do→In Progress→Done, imperative 제목) 을 적용합니다. 나중에 `~/.config/jira-automation/convention.md` 를 편집해 덮어쓸 수 있습니다.
+
+사용자 응답에 따라:
+
+**(y — 로컬 경로)** :
+
+```bash
+cp "<user-provided-path>" ~/.config/jira-automation/convention.md
+```
+
+**(y — 내용 붙여넣기)** :
+
+```bash
+cat > ~/.config/jira-automation/convention.md <<'EOF'
+<사용자가 붙여넣은 내용 그대로>
+EOF
+```
+
+**(y — URL)** : `curl -fsSL <url> -o ~/.config/jira-automation/convention.md` (실패하면 URL 재확인 요청).
+
+**(n — default)** : 레포의 글로벌 표준을 복사:
+
+```bash
+cp "$(pwd)/conventions/default.md" ~/.config/jira-automation/convention.md
+```
+
+저장 후 간단히 확인 출력:
+
+```bash
+echo "---"; head -5 ~/.config/jira-automation/convention.md; echo "..."
+```
+
 ## 3. Python / pipx 준비
 
 먼저 파이썬을 찾습니다 (플랫폼별 이름 차이):
@@ -130,6 +176,7 @@ $PY -m jira_automation doctor
 마지막에 사용자에게 다음을 표시:
 
 - `.env` 경로 (`~/.config/jira-automation/.env`)
+- 컨벤션 경로 (`~/.config/jira-automation/convention.md`) + 소스 ("default" 또는 "user-provided")
 - 심링크 상태 (`~/.claude/skills/jira → <pwd>`)
 - `doctor` PASS 여부
 - **pipx 를 방금 설치했다면**: "`jira` 바이너리는 새 셸에서부터 PATH 에 반영됩니다. 현재 셸에서 쓰려면 `$PY -m jira_automation ...` 를 사용하거나 새 터미널을 여세요." 안내

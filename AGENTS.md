@@ -8,7 +8,7 @@ Codex 가 매 세션 자동 로드하는 에이전트 진입점. 내용은 `CLAU
 2. **CWD 무관하게 `jira` 바이너리 호출.** `cd` 요구사항 없음. PATH 에 없으면 `docs/setup.md`.
 3. **이슈 본문은 `jira search` 가 만든 임시 markdown 파일을 읽는다.** stdout 에 `TEMP_FILE_PATH:<path>` / `ISSUE_COUNT:<n>` 두 줄이 나옴. 터미널 출력에서 본문 파싱 금지 (UTF-8 깨짐).
 4. **프로젝트 스코프는 `.env` 의 `JIRA_PROJECT_KEY` 로 고정.** 별도 지시 없으면 설정 키로 재작성.
-5. **생성/수정 전 `jiraconvention.md` 숙지.**
+5. **생성/수정 전 `~/.config/jira-automation/convention.md` 숙지.**
 6. **세션 첫 명령은 `jira doctor`.**
 
 ## 무엇을 언제 읽을지
@@ -18,7 +18,7 @@ Codex 가 매 세션 자동 로드하는 에이전트 진입점. 내용은 `CLAU
 | 낯선 프로젝트 | `README.md` |
 | 설치/설정 오류 | `docs/setup.md` |
 | 이슈 검색 | `docs/reading.md` |
-| 생성/수정/에픽 연결 | `docs/writing.md` + `jiraconvention.md` |
+| 생성/수정/에픽 연결 | `docs/writing.md` + `~/.config/jira-automation/convention.md` |
 | 에러 발생 | `docs/troubleshooting.md` |
 
 ## 서브커맨드

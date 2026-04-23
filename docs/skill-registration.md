@@ -29,7 +29,7 @@ ln -s ~/src/Jira_automation ~/.claude/skills/jira
 
 ```bash
 mkdir -p ~/.claude/skills/jira
-cp -r SKILL.md CLAUDE.md AGENTS.md README.md docs jiraconvention.md ~/.claude/skills/jira/
+cp -r SKILL.md CLAUDE.md AGENTS.md README.md docs conventions ~/.claude/skills/jira/
 ```
 
 ## Codex

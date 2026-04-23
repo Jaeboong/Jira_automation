@@ -5,7 +5,7 @@
 ## 사전 요구사항
 
 1. `docs/setup.md` 완료 (`jira doctor` 통과)
-2. **`jiraconvention.md` 숙지** — 제목 형식, Story Point 기준, 상태 흐름
+2. **`~/.config/jira-automation/convention.md` 숙지** — 제목 형식, Story Point 기준, 상태 흐름. 없으면 `/setup` 으로 생성 (글로벌 default 또는 팀 컨벤션).
 
 ## 컨벤션 체크리스트
 

@@ -25,4 +25,4 @@ description: Use when the user explicitly mentions Jira or 지라, or asks to se
 - `docs/reading.md` — `jira search`
 - `docs/writing.md` — `jira create` / `update` / `link`
 - `docs/troubleshooting.md` — 에러 패턴
-- `jiraconvention.md` — 이슈 생성/수정 전 필독 (팀 규약)
+- `~/.config/jira-automation/convention.md` — 이슈 생성/수정 전 필독 (팀 규약)

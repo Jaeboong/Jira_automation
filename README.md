@@ -85,7 +85,9 @@ ISSUE_COUNT:N
 - `docs/reading.md` — 검색 사용법
 - `docs/writing.md` — 생성/수정/에픽 연결
 - `docs/troubleshooting.md` — 에러 패턴
-- `jiraconvention.md` — 이슈 명명/Story Point 규약 (팀별 오버라이드 필요)
+- `conventions/default.md` — 글로벌 표준 Jira 컨벤션 (`/setup` 이 팀 컨벤션 없을 때 복사)
+- `conventions/ssafy-example.md` — 원작성 팀의 예시 컨벤션 (참고용)
+- 실사용 컨벤션은 `~/.config/jira-automation/convention.md` — `/setup` 이 여기에 저장
 
 ## 파일 구조
 
