@@ -47,32 +47,54 @@ chmod 600 ~/.config/jira-automation/.env
 
 `<입력값 N>` 은 사용자가 준 실제 값으로 치환. **heredoc quote (`'EOF'`) 를 꼭 유지** — 토큰에 `$` 가 있으면 쉘 확장되는 사고를 막기 위함.
 
-## 3. `pipx` 확인/설치
+## 3. Python / pipx 준비
+
+먼저 파이썬을 찾습니다 (플랫폼별 이름 차이):
 
 ```bash
-command -v pipx >/dev/null && echo "OK" || echo "MISSING"
+for py in python3 python py; do command -v "$py" >/dev/null 2>&1 && { PY=$py; break; }; done
+echo "PY=${PY:-MISSING}"
 ```
 
-- `OK` 이면 다음 단계.
-- `MISSING` 이면 사용자에게 아래 안내하고 중단 (root 권한이 필요할 수 있어 자동 실행하지 않음):
+- `PY=MISSING` 이면 중단하고 사용자에게 Python 3.10+ 설치 안내 (https://www.python.org/downloads/ — Windows Installer 는 "Add Python to PATH" 체크 필수).
+- 발견되면 이후 모든 명령에서 이 인터프리터를 사용하세요 (Bash 변수 `$PY`).
 
-  ```
-  pipx 가 없습니다. 다음 명령으로 설치 후 /setup 을 다시 실행하세요:
+그다음 pipx:
 
-      python3 -m pip install --user pipx
-      python3 -m pipx ensurepath
-      # 이후 새 셸을 열거나 source ~/.bashrc
+```bash
+command -v pipx >/dev/null 2>&1 && echo "HAVE_PIPX" || echo "NO_PIPX"
+```
+
+- `HAVE_PIPX` 이면 다음 단계.
+- `NO_PIPX` 이면 **자동 설치를 시도**합니다 (root 불필요, 사용자 site-packages):
+
+  ```bash
+  $PY -m pip install --user --upgrade pipx
   ```
+
+  성공 후에도 이 셸 PATH 에는 `pipx` 바이너리가 아직 없을 수 있으니, 이후 pipx 호출은 **반드시 `$PY -m pipx`** 형식으로 합니다 (PATH 우회).
+
+  `pip install` 자체가 실패하면 (managed 환경, 네트워크 등) stderr 를 그대로 보고하고 중단.
 
 ## 4. 패키지 설치
 
-현재 디렉토리(레포 루트)에서:
-
 ```bash
+# HAVE_PIPX 였던 경우
 pipx install . --force
+
+# NO_PIPX 여서 방금 설치한 경우 (권장 — 양쪽 다 안전)
+$PY -m pipx install . --force
 ```
 
-`--force` 로 재설치 포함 안전하게 처리. 실패하면 stderr 그대로 사용자에게 보고 후 중단.
+`--force` 로 재설치 포함 멱등 처리. 실패하면 stderr 를 그대로 보고하고 중단.
+
+> **PATH 주의:** pipx 가 새로 설치됐다면 `jira` 바이너리의 위치 (예: `~/.local/bin/jira`) 가 현재 셸 PATH 에 아직 없을 수 있습니다. 이 setup 내에서 `jira` 를 직접 호출하지 말고, PATH 의존성 없는 **`$PY -m jira_automation <cmd>`** 를 사용하세요. 사용자 편의를 위해 아래 명령을 한 번 돌려둡니다 (실패해도 무시):
+>
+> ```bash
+> $PY -m pipx ensurepath 2>/dev/null || true
+> ```
+>
+> `ensurepath` 가 추가한 PATH 는 **새 셸** 에서만 반영됩니다. 7단계 요약에서 이 점을 사용자에게 안내하세요.
 
 ## 5. 스킬 심링크
 
@@ -89,9 +111,13 @@ fi
 
 ## 6. 진단
 
+PATH 의존성을 피해 모듈 형태로 호출합니다:
+
 ```bash
-jira doctor
+$PY -m jira_automation doctor
 ```
+
+(`jira` 바이너리가 PATH 에 반영됐다면 `jira doctor` 도 동일 결과)
 
 출력에 `[CONNECT] OK` 와 `[FIELD] ... (auto)` 가 모두 나오면 성공. 실패하면 에러 줄을 발췌해 사용자에게 보여주고 다음 권고:
 
@@ -105,8 +131,9 @@ jira doctor
 
 - `.env` 경로 (`~/.config/jira-automation/.env`)
 - 심링크 상태 (`~/.claude/skills/jira → <pwd>`)
-- `jira doctor` PASS 여부
-- 다음에 쓸 명령: `jira --help`, `jira search --limit 10`
+- `doctor` PASS 여부
+- **pipx 를 방금 설치했다면**: "`jira` 바이너리는 새 셸에서부터 PATH 에 반영됩니다. 현재 셸에서 쓰려면 `$PY -m jira_automation ...` 를 사용하거나 새 터미널을 여세요." 안내
+- 다음에 쓸 명령: `jira --help` (또는 `$PY -m jira_automation --help`), `jira search --limit 10`
 
 셋업 후 새 Claude Code 세션에서 "지라 이슈 검색해줘" 같은 요청 시 스킬이 자동 매칭됩니다.
 
