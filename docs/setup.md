@@ -1,67 +1,78 @@
 # Setup
 
-Jira CLI 도구의 환경 초기화. 워크스페이스당 한 번만 수행합니다.
+`jira` CLI 설치와 설정. 워크스페이스당 한 번.
 
 ## 사전 요구사항
 
-- Python 3.11+
+- Python 3.10+
+- `pipx` (권장) 또는 venv
 - Jira API 토큰: https://id.atlassian.com/manage-profile/security/api-tokens
 
-## 절차
+## 설치
 
-### 1. `.env` 생성
-
-리포지토리는 `.env.example`만 제공합니다. 복사해서 본인 값으로 채우세요.
+### A. pipx (권장, 사용자용)
 
 ```bash
-cp .env.example .env
+pipx install git+https://github.com/Jaeboong/Jira_automation
 ```
 
-필수 키:
+이후 어디서든 `jira` 실행 가능. 업그레이드는 `pipx upgrade jira-automation`.
 
-| Key | 설명 |
-|---|---|
-| `JIRA_URL` | Atlassian 사이트, 예: `https://ssafy.atlassian.net` |
-| `JIRA_EMAIL` | Atlassian 계정 이메일 |
-| `JIRA_API_TOKEN` | 위 링크에서 발급한 토큰 |
-| `JIRA_PROJECT_KEY` | 모든 작업을 고정할 프로젝트 키 |
-| `JIRA_STORY_POINTS_FIELD` | 선택. 기본값 `customfield_10031` |
-
-### 2. 환경 스크립트 실행
+### B. editable venv (개발자용)
 
 ```bash
-bash scripts/ensure_environment.sh
+git clone https://github.com/Jaeboong/Jira_automation
+cd Jira_automation
+python3 -m venv .venv
+./.venv/bin/pip install -e .
+# 이 venv 에서는 ./.venv/bin/jira 로 호출
 ```
 
-이 스크립트가 하는 일:
+## `.env` 작성
 
-- `.venv/` 생성
-- `jira`, `python-dotenv` 설치
-- `.env`에 placeholder 값이 남아있는지 검증
-- Jira 연결 프로브
+`.env.example` 를 복사하고 본인 값을 채웁니다. 저장 위치는 아래 탐색 순서 중 하나면 됩니다.
 
-## `.env` 값이 스크립트에 전달되는 방식
+```
+JIRA_URL=https://your-company.atlassian.net
+JIRA_EMAIL=your-email@example.com
+JIRA_API_TOKEN=your-api-token-here
+JIRA_PROJECT_KEY=PROJ
 
-`.env` 값은 `config.py`를 거쳐 모든 스크립트에 자동 주입됩니다.
+# 선택 — 미지정 시 jira doctor 가 자동 탐색
+# JIRA_STORY_POINTS_FIELD=customfield_10031
+# JIRA_EPIC_LINK_FIELD=customfield_10014
+# JIRA_TIMEOUT=10
+```
 
-1. `config.py`가 `dotenv.load_dotenv()`로 `.env`를 읽어 **파이썬 프로세스 환경**에 적재
-2. 각 스크립트는 `from config import JIRA_URL, JIRA_EMAIL, ...` 로 값을 받음
-3. URL/email/token/project key는 **CLI 인자로 넘길 필요 없음**
+## `.env` 탐색 순서
 
-### 쉘 변수로 참조하면 안 됨
+`jira` 는 아래 순서로 `.env` 를 찾습니다. 앞에서 찾으면 종료.
 
-`python-dotenv`는 `.env`를 **파이썬 프로세스 안**에서만 로드합니다. 쉘은 이 값을 모릅니다.
+1. `$JIRA_CONFIG_DIR/.env` — 명시적 오버라이드 (CI/다중 프로젝트에 유용)
+2. `./.env` — 현재 CWD
+3. `~/.config/jira-automation/.env` — XDG user config (pipx 유저 권장)
+
+셋 중 어디에도 없으면 loud fail. 네 필수 키 (`JIRA_URL`, `JIRA_EMAIL`, `JIRA_API_TOKEN`, `JIRA_PROJECT_KEY`) 중 하나라도 비어 있으면 loud fail.
+
+## 연결/필드 진단
 
 ```bash
-# 잘못됨 — $JIRA_PROJECT_KEY는 쉘에서 빈 문자열
-./.venv/bin/python search_issues.py --project $JIRA_PROJECT_KEY
-
-# 올바름 — 스크립트가 config.py 통해 .env에서 자동 로드
-./.venv/bin/python search_issues.py
+jira doctor
 ```
 
-정말로 쉘에서 `.env` 값이 필요하면 해당 쉘에서 `set -a; source .env; set +a`를 실행하면 되지만, 스크립트가 이미 처리하므로 보통 불필요합니다.
+출력 예:
 
-## 문제 발생 시
+```
+[CONFIG]   env file   = /home/you/.config/jira-automation/.env
+[CONFIG]   JIRA_URL   = https://ssafy.atlassian.net
+[CONFIG]   project    = PROJ
+[CONNECT]  OK, as 홍길동
+[FIELD]    story points = customfield_10031 (auto)
+[FIELD]    epic link    = customfield_10014 (auto)
+```
 
-`docs/troubleshooting.md` 참조.
+`auto` 가 `UNRESOLVED` 로 나오면 `.env` 에 `JIRA_STORY_POINTS_FIELD` / `JIRA_EPIC_LINK_FIELD` 를 직접 지정하세요. 후보 탐색이 필요하면 `docs/troubleshooting.md`.
+
+## `.env` 는 쉘이 아니라 Python 프로세스에 로드됩니다
+
+`python-dotenv` 가 `jira` 기동 시 파일을 읽어 `os.environ` 에 적재합니다. 쉘에서 `$JIRA_PROJECT_KEY` 를 쓰면 빈 문자열입니다. CLI 에 프로젝트 키를 넘길 필요도 없습니다 — 설정에서 자동으로 가져옵니다.

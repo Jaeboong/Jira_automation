@@ -1,75 +1,67 @@
 # Reading Issues
 
-모든 조회 작업은 `search_issues.py`를 사용합니다. 스크립트는 결과를 임시 markdown 파일에 저장하고 경로를 출력합니다.
-
-## 사전 요구사항
-
-`docs/setup.md` 완료.
+모든 조회는 `jira search`. 결과는 markdown 파일에 저장되고 stdout 에는 경로만 출력됩니다.
 
 ## 읽기 계약 (반드시 지킬 것)
 
-1. 스크립트 실행
-2. stdout에서 `TEMP_FILE_PATH:<path>` 라인 파싱
-3. 파일 읽기 도구로 해당 markdown 파일 읽기
-4. 사용자에게 정리된 요약으로 제시
+1. `jira search ...` 실행
+2. stdout 의 `TEMP_FILE_PATH:<path>` 라인 파싱
+3. 해당 markdown 파일을 Read 도구로 읽기
+4. 사용자에게 정리된 요약 제시
 
-**절대 터미널 출력에서 이슈 본문을 직접 파싱하지 말 것** — Windows 터미널의 UTF-8 깨짐, 여러 줄 설명의 파싱 실패 위험.
+**터미널 출력에서 이슈 본문을 파싱하지 말 것** — UTF-8 깨짐, 여러 줄 설명 파싱 실패 위험.
 
 ## 사용법
 
 ```bash
-./.venv/bin/python search_issues.py [--filter KEYWORD] [--jql JQL_QUERY]
+jira search [--jql JQL | --project KEY] [--filter KEYWORD] [--limit N] [--out PATH]
 ```
 
-`--project` 인자는 기본값이 `.env` `JIRA_PROJECT_KEY` 이므로 **일반적으로 생략**합니다.
-
-### 인자
+`--project` 는 기본값이 `.env` 의 `JIRA_PROJECT_KEY` — **일반적으로 생략**합니다.
 
 | Flag | 용도 |
 |---|---|
-| `--filter KEYWORD` | summary 또는 description에 대소문자 무시 매칭 |
-| `--jql JQL_QUERY` | 직접 JQL |
-| `--project KEY` | 프로젝트 스코프 오버라이드 (비권장 — `.env` 사용) |
+| `--jql` | 직접 JQL. 지정 시 `--project`/`--filter` 무시 |
+| `--project` | 프로젝트 스코프 오버라이드 (비권장) |
+| `--filter` | summary/description 에 대한 대소문자 무시 키워드 필터 |
+| `--limit` | 최대 결과 (기본 100) |
+| `--out` | 저장 경로. 미지정 시 임시 파일 |
 
 ### 출력 형식
 
 ```
-Connecting to Jira...
 TEMP_FILE_PATH:/tmp/tmpXXXXXXXX.md
 ISSUE_COUNT:N
 ```
 
 ## 예시
 
-### 설정된 프로젝트의 모든 이슈
-
 ```bash
-./.venv/bin/python search_issues.py
+# 설정된 프로젝트 전체
+jira search
+
+# 키워드 필터
+jira search --filter "WebSocket"
+
+# 내게 할당된 진행 중 이슈
+jira search --jql 'assignee = currentUser() AND status != Done'
+
+# 최근 7일 이내 업데이트된 에픽만
+jira search --jql 'issuetype = Epic AND updated >= -7d'
+
+# 특정 경로로 저장
+jira search --out ./last_search.md
 ```
 
-### 키워드 필터
-
-```bash
-./.venv/bin/python search_issues.py --filter "WebSocket"
-```
-
-### 직접 JQL
-
-```bash
-./.venv/bin/python search_issues.py --jql "project = MYPROJ AND issuetype = Epic"
-./.venv/bin/python search_issues.py --jql "assignee = currentUser()"
-./.venv/bin/python search_issues.py --jql "project = MYPROJ AND status = '해야 할 일'"
-```
-
-JQL 문자열 안의 프로젝트 키는 **리터럴로 작성**하세요. 쉘은 `.env` 값을 확장하지 않습니다.
+JQL 문자열 안의 프로젝트 키/값은 **리터럴로 작성**하세요. `$JIRA_PROJECT_KEY` 같은 쉘 확장은 동작하지 않습니다.
 
 ## JQL 빠른 참조
 
 ```
-project = MYPROJ
-project = MYPROJ AND issuetype = Epic
-project = MYPROJ AND status = "해야 할 일"
+project = PROJ
+project = PROJ AND issuetype = Epic
+project = PROJ AND status = "해야 할 일"
 assignee = currentUser()
-key in (MYPROJ-1, MYPROJ-3)
-project = MYPROJ AND updated >= -7d
+key in (PROJ-1, PROJ-3)
+project = PROJ AND updated >= -7d
 ```
