@@ -1,0 +1,22 @@
+# Secrets
+.env
+*.env.local
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# WSL / Windows metadata
+*:Zone.Identifier
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
