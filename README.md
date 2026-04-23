@@ -6,13 +6,24 @@
 
 ## 설치
 
-### 사용자 (권장)
+### 원클릭 (권장) — Claude Code 에서
+
+레포를 클론하고 Claude Code 로 열면 `/setup` 슬래시 커맨드가 자동 활성화됩니다. 실행하면 대화형으로 `.env` 값을 받아 `~/.config/jira-automation/.env` 에 저장하고, pipx 설치 + 스킬 심링크 + 연결 진단까지 한 번에 처리합니다.
+
+```bash
+git clone https://github.com/Jaeboong/Jira_automation
+cd Jira_automation
+claude          # 세션 시작
+> /setup
+```
+
+### 수동
 
 ```bash
 pipx install git+https://github.com/Jaeboong/Jira_automation
 ```
 
-이건 `jira` 바이너리를 PATH 에 올리기만 합니다. 에이전트가 스킬로 자동 인식하게 하려면 별도 등록이 필요합니다 — `docs/skill-registration.md` 참고.
+`jira` 바이너리만 PATH 에 올립니다. 에이전트 스킬 등록은 `docs/skill-registration.md` 참고.
 
 ### 개발자
 
