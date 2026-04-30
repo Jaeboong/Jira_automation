@@ -1,8 +1,8 @@
-# 📋 Jira Convention — SSAFY Example
+# 📋 Jira Convention — SSAFY
 
-> **예시 문서입니다 — 그대로 쓰지 마세요.** 이 파일은 원작성자(SSAFY 프로젝트) 팀이 사용한 규약이며, 다른 팀의 기본값이 아닙니다. `/setup` 은 기본적으로 `conventions/default.md` (글로벌 표준) 를 사용합니다. 본인 팀 규약이 있다면 `/setup` 의 "팀 컨벤션 있나요?" 질문에서 **yes** 를 선택해 입력하세요.
+> **포크 사용자 안내.** 이 파일은 SSAFY 프로젝트 팀이 사용하는 Jira 규약입니다. `/setup` 은 `conventions/` 의 `.md` 파일을 자동으로 선택해 컨벤션으로 적용합니다 (현재는 본 파일이 유일). 다른 팀에서 포크해 쓰신다면 본 파일 내용을 자기 팀 규약으로 **교체**하거나, `conventions/` 에 `<team>.md` 를 추가하고 본 파일을 지우세요.
 
-본 문서는 원작성 팀이 사용한 **Jira 이슈 작성 규칙, Story Point 기준, 작업 흐름**입니다.
+본 문서는 SSAFY 팀이 사용하는 **Jira 이슈 작성 규칙, Story Point 기준, 작업 흐름**입니다.
 
 ---
 

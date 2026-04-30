@@ -1,9 +1,11 @@
-# Secrets
-.env
-*.env.local
+# Secrets — env 변형 모두 차단, .env.example 만 허용
+*.env
+.env.*
+!.env.example
 
 # Python
 .venv/
+venv/
 __pycache__/
 *.pyc
 *.pyo
@@ -12,6 +14,14 @@ __pycache__/
 build/
 dist/
 
+# Test / lint caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
 # WSL / Windows metadata
 *:Zone.Identifier
 
@@ -19,6 +29,7 @@ dist/
 .vscode/
 .idea/
 *.swp
+*.code-workspace
 
 # OS
 .DS_Store

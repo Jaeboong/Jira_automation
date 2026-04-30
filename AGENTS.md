@@ -30,7 +30,3 @@ Codex 가 매 세션 자동 로드하는 에이전트 진입점. 내용은 `CLAU
 - `jira link <ISSUE_KEY> <EPIC_KEY>`
 
 자세한 플래그는 `jira <cmd> --help`.
-
-## 경고
-
-`legacy/` 는 지원 대상 아님.

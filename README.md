@@ -85,8 +85,7 @@ ISSUE_COUNT:N
 - `docs/reading.md` — 검색 사용법
 - `docs/writing.md` — 생성/수정/에픽 연결
 - `docs/troubleshooting.md` — 에러 패턴
-- `conventions/default.md` — 글로벌 표준 Jira 컨벤션 (`/setup` 이 팀 컨벤션 없을 때 복사)
-- `conventions/ssafy-example.md` — 원작성 팀의 예시 컨벤션 (참고용)
+- `conventions/*.md` — 팀 Jira 컨벤션 파일들. `/setup` 이 이 디렉토리를 스캔해 `.md` 파일을 자동 선택 (1개면 자동 적용, 여러 개면 선택 묻기)
 - 실사용 컨벤션은 `~/.config/jira-automation/convention.md` — `/setup` 이 여기에 저장
 
 ## 파일 구조
@@ -99,6 +98,5 @@ jira_automation/        # 패키지 (jira CLI 구현체)
   search.py create.py update.py link.py doctor.py
 pyproject.toml          # pipx / pip install 대상
 docs/                   # 주제별 상세 문서
-legacy/                 # 포팅 전 일회성 스크립트 (지원 대상 아님)
 .env.example
 ```

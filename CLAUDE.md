@@ -30,7 +30,3 @@ Claude Code 가 매 세션 자동 로드하는 에이전트 진입점.
 - `jira link <ISSUE_KEY> <EPIC_KEY>`
 
 자세한 플래그는 `jira <cmd> --help`.
-
-## 경고
-
-`legacy/` 아래 일회성 스크립트는 지원 대상 아님. 사용자가 명시적으로 요청하지 않는 한 실행하거나 문서화하지 말 것.

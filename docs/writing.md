@@ -5,7 +5,7 @@
 ## 사전 요구사항
 
 1. `docs/setup.md` 완료 (`jira doctor` 통과)
-2. **`~/.config/jira-automation/convention.md` 숙지** — 제목 형식, Story Point 기준, 상태 흐름. 없으면 `/setup` 으로 생성 (글로벌 default 또는 팀 컨벤션).
+2. **`~/.config/jira-automation/convention.md` 숙지** — 제목 형식, Story Point 기준, 상태 흐름. 없으면 `/setup` 으로 생성 (`conventions/` 의 팀 컨벤션 파일을 자동 적용).
 
 ## 컨벤션 체크리스트
 
@@ -19,15 +19,16 @@
 
 ```bash
 jira create --summary "TITLE" \
-  [--type Task|Story|Bug|Epic] \
+  [--type Task|Story|Bug|Epic|Sub-task] \
   [--description "..."] \
   [--priority High|Medium|Low] \
   [--points N] \
   [--epic EPIC_KEY] \
+  [--parent PARENT_KEY] \
   [--project KEY]
 ```
 
-`--project` 는 기본 `.env` 의 `JIRA_PROJECT_KEY`. `--epic` 을 주면 생성과 동시에 에픽 링크까지 수행 (별도 `jira link` 불필요).
+`--project` 는 기본 `.env` 의 `JIRA_PROJECT_KEY`. `--epic` 을 주면 생성과 동시에 에픽 링크까지 수행 (별도 `jira link` 불필요). `--type Sub-task` 일 때는 `--parent` 로 부모 이슈 키 지정 필수.
 
 ### 예시
 
@@ -41,6 +42,9 @@ jira create \
 
 # Epic
 jira create --summary "LLM 통합" --type Epic --priority High
+
+# Sub-task — --parent 필수
+jira create --summary "[BE] 토큰 발급 함수" --type Sub-task --parent PROJ-42
 ```
 
 ## `jira update`
